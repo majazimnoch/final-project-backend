@@ -14,8 +14,7 @@ const listEndpoints = require('express-list-endpoints');
 
 // THE ROUTES - for enabling the interaction with the files in our Routes-folder
 import mongoUsersRoute from './Routes/horsey-users';
-// below import will be in the code once the Schema for the horses is in the backend-code
-// import mongoHorseyHorsesRoute from './Routes/horsey-horses';
+import mongoHorseyHorsesRoute from './Routes/horsey-horses';
 
 // CORS-options
 const corsOptions = {
@@ -30,7 +29,7 @@ app.options('*', cors())
 
 // Adds the Route's file's routes to the application at the root path
 app.use("/", mongoUsersRoute);
-//app.use("/", mongoHorseyHorsesRoute);
+app.use("/", mongoHorseyHorsesRoute);
 //REMEMBER - add more Route's if we add more later - f.ex. app.use("/", theNameOfTheRouteGoesHereRoute);
 //OTHERWISE - remove these two lines with comments.
 
