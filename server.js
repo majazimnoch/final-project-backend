@@ -1,6 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from 'dotenv';
+// THE ROUTES - for enabling the interaction with the files in our Routes-folder
+import mongoUsersRoute from './Routes/horsey-users';
+import mongoHorseyHorsesRoute from './Routes/horsey-horses';
+
 dotenv.config();
 // YK - I installed "npm i node-fetch" to simplify fetches in the backend -
 // https://www.npmjs.com/package/node-fetch
@@ -12,14 +16,10 @@ const port = process.env.PORT || 8080;
 const app = express();
 const listEndpoints = require('express-list-endpoints');
 
-// THE ROUTES - for enabling the interaction with the files in our Routes-folder
-import mongoUsersRoute from './Routes/horsey-users';
-import mongoHorseyHorsesRoute from './Routes/horsey-horses';
-
 // CORS-options
 const corsOptions = {
   origin: '*', // Allowing all origins
-  methods: ['GET', 'POST'], // Allowing GET and POST requests
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Allowing GET and POST requests
 };
 
 // Add middlewares to enable cors and json body parsing

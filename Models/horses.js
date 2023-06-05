@@ -23,6 +23,6 @@ const HorseSchema = new mongoose.Schema({
   squares: [SquareSchema]
 });
 
-const Horse = mongoose.model("Horses", HorseSchema);
+const Horse = mongoose.model("Horse", HorseSchema);
 
 module.exports = Horse;
