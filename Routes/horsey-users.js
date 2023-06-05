@@ -85,14 +85,14 @@ router.post("/users/login", async (req, res) => {
                     profileName: user.profileName,
                     profileText: user.profileText,
                     profilePicture: user.profilePicture,
-                    message: 'You are logged in, lets create some magic!'
+                    message: "You are logged in, lets create some magic!"
                 }
             })
         } else {
             res.status(404).json({
                 success: false,
                 response: {
-                    message: 'Oops, the credentials are not valid'
+                    message: "Oops, the credentials are not valid"
                 }
             })
           }
@@ -123,7 +123,7 @@ router.get("/users/:userId", authenticateUser, async (req, res) => {
                 res.status(404).json({
                     success: false,
                     response: {
-                        message: 'Could not find the user'
+                        message: "Could not find the user"
                     }
                 });
             }
@@ -132,7 +132,7 @@ router.get("/users/:userId", authenticateUser, async (req, res) => {
             res.status(403).json({
                 success: false,
                 response: {
-                    message: 'Authorization for this user is declined - information unavailable'
+                    message: "Authorization for this user is declined - information unavailable"
                 }
             });
         }
@@ -184,7 +184,7 @@ router.patch("/users/:userId", authenticateUser, async (req, res) => {
             res.status(403).json({
               success: false,
               response: {
-                message: 'Authorization to update this user is declined - please try again'
+                message: "Authorization to update this user is declined - please try again"
               }
             });
           }
