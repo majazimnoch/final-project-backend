@@ -3,16 +3,16 @@ const router = express.Router()
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv';
-// import authenticateUser from '../Middlewares/middlewares'
-// import User from '../Models/user';
+import authenticateUser from '../Middlewares/middlewares'
+import User from '../Models/horsey-user';
 
-// dotenv.config();
-require('dotenv').config();
+dotenv.config();
+// require('dotenv').config();
 // mongodb://127.0.0.1/xxxxxx
-const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/horsey"
+const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/horsey";
 mongoose.set('strictQuery', false);
-mongoose.connect(mongoUrl, {useNewUrlParser: true, useUnifiedTopology: true})
-mongoose.Promise = Promise
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.Promise = Promise;
 
 // when using the routing method in node js the word app gets replaced with "router.get/router.post" etc
 // depending on which requests that we send do the database
@@ -196,3 +196,5 @@ router.patch("/users/:userId", authenticateUser, async (req, res) => {
           });
         }
       });
+
+export default router;

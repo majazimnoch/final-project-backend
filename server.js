@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import dotenv from 'dotenv';
+dotenv.config();
 // YK - I installed "npm i node-fetch" to simplify fetches in the backend -
 // https://www.npmjs.com/package/node-fetch
 
@@ -8,14 +10,43 @@ import cors from "cors";
 // PORT=9000 npm start
 const port = process.env.PORT || 8080;
 const app = express();
+const listEndpoints = require('express-list-endpoints');
+
+// THE ROUTES - for enabling the interaction with the files in our Routes-folder
+import mongoUsersRoute from './Routes/horsey-users';
+// below import will be in the code once the Schema for the horses is in the backend-code
+// import mongoHorseyHorsesRoute from './Routes/horsey-horses';
+
+// CORS-options
+const corsOptions = {
+  origin: '*', // Allowing all origins
+  methods: ['GET', 'POST'], // Allowing GET and POST requests
+};
 
 // Add middlewares to enable cors and json body parsing
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
+app.options('*', cors())
+
+// Adds the Route's file's routes to the application at the root path
+app.use("/", mongoUsersRoute);
+//app.use("/", mongoHorseyHorsesRoute);
+//REMEMBER - add more Route's if we add more later - f.ex. app.use("/", theNameOfTheRouteGoesHereRoute);
+//OTHERWISE - remove these two lines with comments.
 
 // Start defining your routes here
 app.get("/", (req, res) => {
-  res.send("Hello Technigo!");
+  const welcomeMessage = "Final Project Horsey API";
+  const endpoints = listEndpoints(app);
+
+  res.status(200).json({
+    success: true,
+    message: "OK",
+    body: {
+      welcomeMessage,
+      endpoints
+    }
+  });
 });
 
 // Start the server
