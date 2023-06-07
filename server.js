@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
 
 // Register
 app.post("/register", async (req, res) => {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
     try {
       const salt = bcrypt.genSaltSync();
       const newUser = await new User({
