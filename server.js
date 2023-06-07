@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "./Models/horsey-user";
 
-const mongoUrl = process.env.MONGO_URL || "mongodb://127.0.0.1/project-auth";
+const mongoUrl = process.env.MONGO_URL || "mongodb://127.0.0.1/final-project-backend";
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 
