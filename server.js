@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "./Models/horsey-user";
 
-const mongoUrl = process.env.MONGO_URL || "mongodb://127.0.0.1/final-project-backend";
+const mongoUrl = process.env.MONGO_URL || "mongodb://127.0.0.1/horsey";
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 
@@ -79,9 +79,9 @@ app.get("/secrets", (req, res) => {
 
 
 app.post("/login", async (req, res) => {
-  const { name, password } = req.body;
+  const { email, password } = req.body;
   try {
-    const user = await User.findOne({name: name})
+    const user = await User.findOne({email: email})
     if (user && bcrypt.compareSync(password, user.password)) {
       res.status(200).json({
         success: true,
