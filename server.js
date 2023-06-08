@@ -74,7 +74,7 @@ app.post("/register", async (req, res) => {
 // Only logged in users can see
 app.get("/secrets", authenticateUser);
 app.get("/secrets", (req, res) => {
-  res.json({ user: req.user, secret: "you're logged in!"});
+  res.json({ user: req.user, secret: "welcome to Horsey!"});
 });
 
 
