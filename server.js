@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 // THE ROUTES - for enabling the interaction with the files in our Routes-folder
 import mongoUsersRoute from './Routes/horsey-users';
 import mongoHorseyHorsesRoute from './Routes/horsey-horses';
+import facts from './RandomFacts/facts.json';
+// import randomFacts from './Routes/facts';
 
 dotenv.config();
 // YK - I installed "npm i node-fetch" to simplify fetches in the backend -
@@ -30,6 +32,7 @@ app.options('*', cors())
 // Adds the Route's file's routes to the application at the root path
 app.use("/", mongoUsersRoute);
 app.use("/", mongoHorseyHorsesRoute);
+// app.use("/", randomFacts);
 //REMEMBER - add more Route's if we add more later - f.ex. app.use("/", theNameOfTheRouteGoesHereRoute);
 //OTHERWISE - remove these two lines with comments.
 
@@ -46,6 +49,15 @@ app.get("/", (req, res) => {
       endpoints
     }
   });
+});
+
+const factsData = require('./RandomFacts/facts.json');
+
+// Define a route to retrieve a random fact
+app.get('/random-fact', (req, res) => {
+  const randomIndex = Math.floor(Math.random() * factsData.facts.length);
+  const randomFact = factsData.facts[randomIndex];
+  res.json(randomFact);
 });
 
 // Start the server

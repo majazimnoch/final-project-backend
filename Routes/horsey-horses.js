@@ -14,7 +14,7 @@ mongoose.Promise = Promise;
 router.post("/horses", authenticateUser, async (req, res) => {
   try {
     const { horseName } = req.body;
-    const loggedinuser = req.loggedinuser; // Access the currently logged in user from req object
+    const loggedinuser = req.loggedinuser; // Access the logged in user from req object
 
     const newHorse = await new Horse({
       horseName: horseName, 
@@ -32,7 +32,7 @@ router.post("/horses", authenticateUser, async (req, res) => {
       res.status(404).json({
         success: false, 
         response: {
-          message: "Horse could not be created",
+          message: "New horse could not be created",
       } 
       })
     }
@@ -84,22 +84,32 @@ router.get("/horses/:horseId", authenticateUser, async (req, res) => {
 
   try {
     const singleHorse = await Horse.findById(horseId);
-
+    // this check if a singleHorse is found
     if (singleHorse) {
+      // this checks if the active user is the same as the logged-in
+      if (singleHorse.horseActiveuser === loggedinUserId) {
       res.status(200).json({
         success: true,
         response: {
             message: "Successfully fetched the horse",
             data: singleHorse,
           }
-        })
+        });
+      } else {
+        res.status(403).json({
+          success: false,
+          response: {
+            message: "Access denied. You do not have permission to view this horse.",
+          }
+        });
+      }
       } else {
         res.status(404).json({
           success: false, 
           response: {
             message: "Could not fetch the horse",
           } 
-        })
+        });
       }
     } catch (error) {
       res.status(500).json({
