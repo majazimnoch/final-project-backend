@@ -9,6 +9,28 @@ const HorseSchema = new mongoose.Schema({
     minLength: 2,
     maxLength: 50
   },
+  horseYearOfBirth: {
+    type: Number,
+    required: true,
+  },
+  horsePedigreeFather: {
+    type: String,
+  },
+  horsePedigreeMother: {
+    type: String,
+  },
+  horsePedigreeGrandfather: {
+    type: String,
+  },
+  horseLevelOfSportJumping: {
+    type: Number,
+  },
+  horseLevelOfSportDressage: {
+    type: String,
+  },
+  horseLevelOfSportCrossCountry: {
+    type: String,
+  },
   horsePrevious: {
     type: Boolean,
     default: false,
