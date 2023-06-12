@@ -24,7 +24,7 @@ const UserSchema = new Schema({
     accessToken: {
       type: String,
       default: () => crypto.randomBytes(128).toString('hex')
-    }
+    },
   });
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model("User", UserSchema, "users");
