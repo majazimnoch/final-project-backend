@@ -1,4 +1,4 @@
-import authenticateUser from '../Middlewares/middlewares'
+import authenticateUser from '../Middlewares/authentication'
 import express from "express";
 const router = express.Router()
 import mongoose from "mongoose";

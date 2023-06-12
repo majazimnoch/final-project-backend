@@ -3,7 +3,7 @@ const router = express.Router()
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv';
-import authenticateUser from '../Middlewares/middlewares'
+import authenticateUser from '../Middlewares/authentication'
 import User from '../Models/horsey-user';
 dotenv.config();
 
