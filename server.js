@@ -3,7 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 // import crypto from "crypto";
 import bcrypt from 'bcrypt';
-import authenticateUser from './Middlewares/authentication';
+// import authenticateUser from './Middlewares/authentication';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
 
@@ -38,6 +38,39 @@ app.use(express.json());
 //     });
 //   }
 // };
+
+const authenticateUser = async (req, res, next) => {
+  const accessToken = req.header('Authorization');
+  try {
+    if (!accessToken) {
+      return res.status(401).json({
+        success: false,
+        response: {
+          message: "Authentication required. Access token not provided.",
+        },
+      });
+    }
+
+    const loggedinuser = await User.findOne({ accessToken: accessToken });
+    if (loggedinuser) {
+      req.accessToken = accessToken;
+      req.loggedinuser = loggedinuser;
+      next();
+    } else {
+      res.status(401).json({
+        success: false,
+        response: {
+          message: "Invalid access token. You need to log in.",
+        },
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+    });
+  }
+};
 
 // Start defining your routes here
 app.get("/", (req, res) => {
@@ -100,24 +133,26 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Posts new horse
-app.post("/horses", authenticateUser)
-app.post("/horses", async (req, res) => {
-  const { horse } = req.body
-  const accessToken = req.header("Authorization")
-  const user = await User.findOne({accessToken: accessToken})
+app.post("/horses", authenticateUser, async (req, res) => {
+  const { horse } = req.body;
+  const accessToken = req.header("Authorization");
+  const user = await User.findOne({ accessToken: accessToken });
 
   try {
-    const newHorse = await new Horse({horse, userId: user._id, username: user.username}).save()
+    const newHorse = await new Horse({
+      horse,
+      userId: user._id,
+      username: user.username,
+    }).save();
     res.status(201).json({
       success: true,
-      response: newHorse
-    })
+      response: newHorse,
+    });
   } catch (e) {
     res.status(400).json({
       success: false,
-      response: e
-    })
+      response: e,
+    });
   }
 });
 
