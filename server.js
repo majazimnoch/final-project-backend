@@ -18,94 +18,53 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// const authenticateUser = async (req, res, next) => {
-//   const accessToken = req.header("Authorization");
-//   try {
-//     const user = await User.findOne({accessToken: accessToken});
-//     if (user) {
-//     req.user = user;
-//     next();
-//     } else {
-//         res.status(401).json({
-//           success: false,
-//           response: "Please log in"
-//       })
-//     }
-//   } catch (e) {
-//     res.status(500).json({
-//      success: false,
-//       response: e
-//     });
-//   }
-// };
-
 const authenticateUser = async (req, res, next) => {
-  const accessToken = req.header('Authorization');
-  try {
-    if (!accessToken) {
-      return res.status(401).json({
-        success: false,
-        response: {
-          message: "Authentication required. Access token not provided.",
-        },
-      });
-    }
-
-    const loggedinuser = await User.findOne({ accessToken: accessToken });
-    if (loggedinuser) {
-      req.accessToken = accessToken;
-      req.loggedinuser = loggedinuser;
-      next();
-    } else {
-      res.status(401).json({
-        success: false,
-        response: {
-          message: "Invalid access token. You need to log in.",
-        },
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
+const accessToken = req.header("Authorization");
+try {
+     const user = await User.findOne({accessToken: accessToken});
+     if (user) {
+     req.user = user;
+     next();
+     } else {
+         res.status(401).json({
+           success: false,
+           response: "Please log in"
+       })
+     }
+   } catch (e) {
+     res.status(500).json({
       success: false,
-      response: error,
-    });
-  }
-};
+       response: e
+     });
+   }
+ };
 
-// Start defining your routes here
-app.get("/", (req, res) => {
-  res.send("Hello horselover!");
-});
-
-// POST-routes
-
-// Registering new user
+ // Register
 app.post("/register", async (req, res) => {
-    const { name, email, password } = req.body;
-    try {
-      const salt = bcrypt.genSaltSync();
-      const newUser = await new User({
-        name: req.body.name,
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, salt)
-      }).save();
-      res.status(201).json({
-        success: true,
-        response: {
-          name: newUser.name,
-          id: newUser._id,
-          accessToken: newUser.accessToken
-        }
-      })
-  } catch (e) {
-    res.status(400).json({
-      success: false,
-      response: e
-      })
-    }
+  const { name, email, password } = req.body;
+  try {
+    const salt = bcrypt.genSaltSync();
+    const newUser = await new User({
+      name: req.body.name,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, salt)
+    }).save();
+    res.status(201).json({
+      success: true,
+      response: {
+        name: newUser.name,
+        id: newUser._id,
+        accessToken: newUser.accessToken
+      }
+    })
+} catch (e) {
+  res.status(400).json({
+    success: false,
+    response: e
+    })
+  }
 });
 
-// Logging in existing user
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
