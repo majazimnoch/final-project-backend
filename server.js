@@ -8,7 +8,6 @@ import bcrypt from 'bcrypt';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
 import authenticateApikey from './Middlewares/apikey-authentication';
-// import
 
 dotenv.config();
 
