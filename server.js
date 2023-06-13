@@ -1,17 +1,20 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 // import crypto from "crypto";
 import bcrypt from 'bcrypt';
 // import authenticateUser from './Middlewares/authentication';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
 
+dotenv.config();
+
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/horsey';
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 const app = express();
 
 // Add middlewares to enable cors and json body parsing
@@ -213,6 +216,15 @@ app.delete("/horses/:horseId", async (req, res) => {
       response: e
     })
   }
+});
+
+const factsData = require('./RandomFacts/facts.json');
+
+// Define a route to retrieve a random fact
+app.get('/random-fact', (req, res) => {
+  const randomIndex = Math.floor(Math.random() * factsData.facts.length);
+  const randomFact = factsData.facts[randomIndex];
+  res.json(randomFact);
 });
 
 // Start the server
