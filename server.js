@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
 import authenticateApikey from './Middlewares/apikey-authentication';
+// import
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ const app = express();
 // Add middlewares to enable cors and json body parsing
 app.use(cors());
 app.use(express.json());
-app.use(authenticateApiKey);
+app.use(authenticateApikey);
 
 const authenticateUser = async (req, res, next) => {
 const accessToken = req.header("Authorization");
