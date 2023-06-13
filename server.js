@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import mongoUsersRoute from './Routes/horsey-users';
 import mongoHorseyHorsesRoute from './Routes/horsey-horses';
 import facts from './RandomFacts/facts.json';
+import authenticateApiKey from "./Middlewares/apikey-authentication";
 // import randomFacts from './Routes/facts';
 
 dotenv.config();
@@ -15,6 +16,7 @@ dotenv.config();
 // when starting the server. Example command to overwrite PORT env variable value:
 // PORT=9000 npm start
 const port = process.env.PORT || 8080;
+const apikey = process.env.API_KEY
 const app = express();
 const listEndpoints = require('express-list-endpoints');
 
@@ -27,7 +29,8 @@ const corsOptions = {
 // Add middlewares to enable cors and json body parsing
 app.use(cors(corsOptions));
 app.use(express.json());
-app.options('*', cors())
+app.use(authenticateApiKey);
+app.options('*', cors());
 
 // Adds the Route's file's routes to the application at the root path
 app.use("/", mongoUsersRoute);
