@@ -1,14 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-// import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 // import crypto from "crypto";
 import bcrypt from 'bcrypt';
 // import authenticateUser from './Middlewares/authentication';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
 
-// dotenv.config();
+dotenv.config();
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/horsey';
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
