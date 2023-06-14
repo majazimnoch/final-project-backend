@@ -46,27 +46,27 @@ try {
  };
 
  // Register
-app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+ app.post("/register", async (req, res) => {
+  const { username, email, password } = req.body; // Update field from "name" to "username"
   try {
     const salt = bcrypt.genSaltSync();
     const newUser = await new User({
-      name: req.body.name,
+      username: req.body.username, // Update field from "name" to "username"
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, salt)
     }).save();
     res.status(201).json({
       success: true,
       response: {
-        name: newUser.name,
+        username: newUser.username, // Update field from "name" to "username"
         id: newUser._id,
         accessToken: newUser.accessToken
       }
     })
-} catch (e) {
-  res.status(400).json({
-    success: false,
-    response: e
+  } catch (e) {
+    res.status(400).json({
+      success: false,
+      response: e
     })
   }
 });
