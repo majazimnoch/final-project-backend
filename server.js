@@ -187,9 +187,9 @@ app.get("/horses/:horseId", async (req, res) => {
    }
 });
 
-//Show horses from a specific user
-app.get("/users/:userId/horses", authenticateUser)
-app.get("/users/:userId/horses", async (req, res) => {
+//Show horses posted from a specific user
+app.get("/users/:userId/posts", authenticateUser)
+app.get("/users/:userId/posts", async (req, res) => {
   const { userId } = req.params;
   try {
     const usersHorses = await Horse.find({userId: userId}).sort({createdAt: 'desc'})
