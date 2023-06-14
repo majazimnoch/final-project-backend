@@ -23,7 +23,8 @@ const HorseDetails = new Schema({
 
 const HorseSchema = new Schema({
   horse: {
-    type: HorseDetails
+    type: Schema.Types.ObjectId,
+    ref: "HorseDetails"
   },
   createdAt: {
     type: Date,
@@ -37,6 +38,6 @@ const HorseSchema = new Schema({
     type: String,
     required: true
   }
-})
+});
 
 export default mongoose.model("Horse", HorseSchema, "horses");
