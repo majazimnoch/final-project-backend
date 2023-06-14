@@ -1,10 +1,3 @@
-import express from 'express';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-// import crypto from "crypto";
-import bcrypt from 'bcrypt';
-// import authenticateUser from './Middlewares/authentication';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
 import authenticateApikey from './Middlewares/apikey-authentication';
@@ -14,8 +7,7 @@ dotenv.config();
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/horsey';
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
-
-const port = process.env.PORT || 8081;
+const port = process.env.PORT || 8080;
 const apikey = process.env.API_KEY
 const app = express();
 
@@ -147,7 +139,7 @@ app.get("/users", async (req, res) => {
 app.get("/horses", authenticateUser)
 app.get("/horses", async (req, res) => {
   try {
-    const horses = await Horse.find({createdAt: 'desc'})
+    const horses = await Horse.find()
     res.status(200).json({
      success: true,
      response: horses
@@ -187,9 +179,9 @@ app.get("/horses/:horseId", async (req, res) => {
    }
 });
 
-//Show horses posted from a specific user
-app.get("/users/:userId/posts", authenticateUser)
-app.get("/users/:userId/posts", async (req, res) => {
+//Show horses from a specific user
+app.get("/users/:userId/horses", authenticateUser)
+app.get("/users/:userId/horses", async (req, res) => {
   const { userId } = req.params;
   try {
     const usersHorses = await Horse.find({userId: userId}).sort({createdAt: 'desc'})
