@@ -107,7 +107,7 @@ app.post("/horses", authenticateUser, async (req, res) => {
     const newHorse = await new Horse({
       horse,
       userId: user._id,
-      username: user.username,
+      username: user.name,
     }).save();
     res.status(201).json({
       success: true,
