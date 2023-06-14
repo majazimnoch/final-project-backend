@@ -15,7 +15,7 @@ const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/horsey';
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 const apikey = process.env.API_KEY
 const app = express();
 
@@ -126,7 +126,7 @@ app.post("/horses", authenticateUser, async (req, res) => {
 // Only logged in users can see
 app.get("/secrets", authenticateUser);
 app.get("/secrets", (req, res) => {
-  res.json({ username: req.username, secret: "welcome to Horsey!"});
+  res.json({ user: req.user, secret: "welcome to Horsey!"});
 });
 
 // All users
