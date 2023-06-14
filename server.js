@@ -47,18 +47,18 @@ try {
 
  // Register
 app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { username, email, password } = req.body;
   try {
     const salt = bcrypt.genSaltSync();
     const newUser = await new User({
-      name: req.body.name,
+      username: req.body.username,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, salt)
     }).save();
     res.status(201).json({
       success: true,
       response: {
-        name: newUser.name,
+        name: newUser.username,
         id: newUser._id,
         accessToken: newUser.accessToken
       }
@@ -79,7 +79,7 @@ app.post("/login", async (req, res) => {
       res.status(200).json({
         success: true,
         response: {
-          username: user.name,
+          username: user.username,
           id: user._id,
           accessToken: user.accessToken
         }
@@ -126,7 +126,7 @@ app.post("/horses", authenticateUser, async (req, res) => {
 // Only logged in users can see
 app.get("/secrets", authenticateUser);
 app.get("/secrets", (req, res) => {
-  res.json({ user: req.user, secret: "welcome to Horsey!"});
+  res.json({ username: req.username, secret: "welcome to Horsey!"});
 });
 
 // All users
@@ -147,7 +147,7 @@ app.get("/users", async (req, res) => {
 app.get("/horses", authenticateUser)
 app.get("/horses", async (req, res) => {
   try {
-    const horses = await Horse.find()
+    const horses = await Horse.find({createdAt: 'desc'})
     res.status(200).json({
      success: true,
      response: horses
