@@ -25,12 +25,12 @@ app.use(express.json());
 app.use(authenticateApikey);
 
 const authenticateUser = async (req, res, next) => {
-const accessToken = req.header("Authorization");
-try {
+  const accessToken = req.header("Authorization");
+  try {
      const user = await User.findOne({accessToken: accessToken});
      if (user) {
-     req.user = user;
-     next();
+      req.user = user;
+      next();
      } else {
          res.status(401).json({
            success: false,
@@ -42,34 +42,37 @@ try {
       success: false,
        response: e
      });
-   }
- };
+  }
+};
 
- // Register
+// Register
 app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  console.log("Received registration request:", req.body);
+  const { username, email, password } = req.body; // Update field name from `name` to `username`
   try {
     const salt = bcrypt.genSaltSync();
     const newUser = await new User({
-      name: req.body.name,
+      username: req.body.username, // Update field name from `name` to `username`
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, salt)
     }).save();
     res.status(201).json({
       success: true,
       response: {
-        name: newUser.name,
+        name: newUser.username, // Update field name from `name` to `username`
         id: newUser._id,
         accessToken: newUser.accessToken
       }
-    })
-} catch (e) {
-  res.status(400).json({
-    success: false,
-    response: e
-    })
+    });
+  } catch (e) {
+    console.log("Registration error:", e);
+    res.status(400).json({
+      success: false,
+      response: e
+    });
   }
 });
+
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -100,6 +103,9 @@ app.post("/login", async (req, res) => {
 
 app.post("/horses", authenticateUser, async (req, res) => {
   const { horse } = req.body;
+
+  // user is already avaliable in req.user since it was fetched
+  // in the "authenticateUser" method.
   const accessToken = req.header("Authorization");
   const user = await User.findOne({ accessToken: accessToken });
 
@@ -126,7 +132,7 @@ app.post("/horses", authenticateUser, async (req, res) => {
 // Only logged in users can see
 app.get("/secrets", authenticateUser);
 app.get("/secrets", (req, res) => {
-  res.json({ user: req.user, secret: "welcome to Horsey!"});
+  res.json({ username: req.username, secret: "Welcome to Horsey!"});
 });
 
 // All users
@@ -147,7 +153,7 @@ app.get("/users", async (req, res) => {
 app.get("/horses", authenticateUser)
 app.get("/horses", async (req, res) => {
   try {
-    const horses = await Horse.find()
+    const horses = await Horse.find({createdAt: 'desc'})
     res.status(200).json({
      success: true,
      response: horses
@@ -187,9 +193,9 @@ app.get("/horses/:horseId", async (req, res) => {
    }
 });
 
-//Show horses from a specific user
-app.get("/users/:userId/horses", authenticateUser)
-app.get("/users/:userId/horses", async (req, res) => {
+//Show horses posted from a specific user
+app.get("/users/:userId/posts", authenticateUser)
+app.get("/users/:userId/posts", async (req, res) => {
   const { userId } = req.params;
   try {
     const usersHorses = await Horse.find({userId: userId}).sort({createdAt: 'desc'})
