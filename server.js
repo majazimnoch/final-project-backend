@@ -14,6 +14,7 @@ dotenv.config();
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/horsey';
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
+
 const port = process.env.PORT || 8080;
 const apikey = process.env.API_KEY
 const app = express();
