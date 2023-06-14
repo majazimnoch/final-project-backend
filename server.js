@@ -16,7 +16,7 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 
 const port = process.env.PORT || 8080;
-// const apikey = process.env.API_KEY
+const apikey = process.env.API_KEY
 const app = express();
 
 // Add middlewares to enable cors and json body parsing
@@ -45,31 +45,34 @@ try {
    }
  };
 
- // Register
- app.post("/register", async (req, res) => {
-  const { username, email, password } = req.body; // Update field from "name" to "username"
+// Register
+app.post("/register", async (req, res) => {
+  console.log("Received registration request:", req.body);
+  const { username, email, password } = req.body; // Update field name from `name` to `username`
   try {
     const salt = bcrypt.genSaltSync();
     const newUser = await new User({
-      username: req.body.username, // Update field from "name" to "username"
+      username: req.body.username, // Update field name from `name` to `username`
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, salt)
     }).save();
     res.status(201).json({
       success: true,
       response: {
-        username: newUser.username, // Update field from "name" to "username"
+        name: newUser.username, // Update field name from `name` to `username`
         id: newUser._id,
         accessToken: newUser.accessToken
       }
-    })
+    });
   } catch (e) {
+    console.log("Registration error:", e);
     res.status(400).json({
       success: false,
       response: e
-    })
+    });
   }
 });
+
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -107,7 +110,7 @@ app.post("/horses", authenticateUser, async (req, res) => {
     const newHorse = await new Horse({
       horse,
       userId: user._id,
-      username: user.name,
+      username: user.username,
     }).save();
     res.status(201).json({
       success: true,
@@ -126,7 +129,7 @@ app.post("/horses", authenticateUser, async (req, res) => {
 // Only logged in users can see
 app.get("/secrets", authenticateUser);
 app.get("/secrets", (req, res) => {
-  res.json({ user: req.user, secret: "welcome to Horsey!"});
+  res.json({ username: req.username, secret: "Welcome to Horsey!"});
 });
 
 // All users
@@ -147,7 +150,7 @@ app.get("/users", async (req, res) => {
 app.get("/horses", authenticateUser)
 app.get("/horses", async (req, res) => {
   try {
-    const horses = await Horse.find()
+    const horses = await Horse.find({createdAt: 'desc'})
     res.status(200).json({
      success: true,
      response: horses
@@ -187,9 +190,9 @@ app.get("/horses/:horseId", async (req, res) => {
    }
 });
 
-//Show horses from a specific user
-app.get("/users/:userId/horses", authenticateUser)
-app.get("/users/:userId/horses", async (req, res) => {
+//Show horses posted from a specific user
+app.get("/users/:userId/posts", authenticateUser)
+app.get("/users/:userId/posts", async (req, res) => {
   const { userId } = req.params;
   try {
     const usersHorses = await Horse.find({userId: userId}).sort({createdAt: 'desc'})
