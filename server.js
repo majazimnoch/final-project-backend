@@ -2,47 +2,55 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+// import crypto from "crypto";
 import bcrypt from 'bcrypt';
 // import authenticateUser from './Middlewares/authentication';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
-// import authenticateApikey from './Middlewares/apikey-authentication';
+import authenticateApikey from './Middlewares/apikey-authentication';
 
 dotenv.config();
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/horsey';
-mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("Connected to MongoDB!");
+  })
+  .catch((error) => {
+    console.log("Error connecting to MongoDB:", error);
+  });
 mongoose.Promise = Promise;
 
 const port = process.env.PORT || 8080;
-// const apikey = process.env.API_KEY
+const apikey = process.env.API_KEY
 const app = express();
 
 // Add middlewares to enable cors and json body parsing
 app.use(cors());
 app.use(express.json());
-// app.use(authenticateApikey);
+app.use(authenticateApikey);
 
 const authenticateUser = async (req, res, next) => {
-const accessToken = req.header("Authorization");
-try {
-     const user = await User.findOne({accessToken: accessToken});
-     if (user) {
-     req.user = user;
-     next();
-     } else {
-         res.status(401).json({
-           success: false,
-           response: "Please log in"
-       })
-     }
-   } catch (e) {
-     res.status(500).json({
+  const accessToken = req.header("Authorization");
+  try {
+    const user = await User.findOne({ accessToken: accessToken });
+    if (user) {
+      req.user = user;
+      console.log("Authenticated User:", req.user); // Move this line here
+      next();
+    } else {
+      res.status(401).json({
+        success: false,
+        response: "Please log in"
+      });
+    }
+  } catch (e) {
+    res.status(500).json({
       success: false,
-       response: e
-     });
-   }
- };
+      response: e
+    });
+  }
+};
 
  // Register
 app.post("/register", async (req, res) => {
@@ -110,7 +118,10 @@ app.post("/horses", authenticateUser, async (req, res) => {
     }).save();
     res.status(201).json({
       success: true,
-      response: newHorse,
+      response: newHorse
+        // name: newHorse.horseName,
+        // id: newHorse._id,
+        // description: newHorse.description
     });
   } catch (e) {
     res.status(400).json({
