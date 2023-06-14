@@ -25,12 +25,12 @@ app.use(express.json());
 app.use(authenticateApikey);
 
 const authenticateUser = async (req, res, next) => {
-const accessToken = req.header("Authorization");
-try {
+  const accessToken = req.header("Authorization");
+  try {
      const user = await User.findOne({accessToken: accessToken});
      if (user) {
-     req.user = user;
-     next();
+      req.user = user;
+      next();
      } else {
          res.status(401).json({
            success: false,
@@ -42,8 +42,8 @@ try {
       success: false,
        response: e
      });
-   }
- };
+  }
+};
 
 // Register
 app.post("/register", async (req, res) => {
@@ -103,6 +103,9 @@ app.post("/login", async (req, res) => {
 
 app.post("/horses", authenticateUser, async (req, res) => {
   const { horse } = req.body;
+
+  // user is already avaliable in req.user since it was fetched
+  // in the "authenticateUser" method.
   const accessToken = req.header("Authorization");
   const user = await User.findOne({ accessToken: accessToken });
 
