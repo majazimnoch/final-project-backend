@@ -23,7 +23,7 @@ const HorseDetails = new Schema({
 
 const HorseSchema = new Schema({
   horse: {
-    type: Schema.Types.ObjectId,
+    type: HorseDetails,
     ref: "HorseDetails"
   },
   createdAt: {

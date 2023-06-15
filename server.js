@@ -2,27 +2,23 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-// import crypto from "crypto";
 import bcrypt from 'bcrypt';
-// import authenticateUser from './Middlewares/authentication';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
-import authenticateApikey from './Middlewares/apikey-authentication';
 
 dotenv.config();
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/horsey';
-mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(mongoUrl, { dbName: 'users', useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 
 const port = process.env.PORT || 8080;
-const apikey = process.env.API_KEY
 const app = express();
 
 // Add middlewares to enable cors and json body parsing
 app.use(cors());
 app.use(express.json());
-app.use(authenticateApikey);
+
 const authenticateUser = async (req, res, next) => {
 const accessToken = req.header("Authorization");
 try {
@@ -46,14 +42,13 @@ try {
 
  // Register
 app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
   try {
     const salt = bcrypt.genSaltSync();
     const newUser = await new User({
       name: req.body.name,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, salt)
-    }).save();
+    }).save()
     res.status(201).json({
       success: true,
       response: {
@@ -72,8 +67,11 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({email: email})
+
+    console.log(user)
     if (user && bcrypt.compareSync(password, user.password)) {
       res.status(200).json({
         success: true,
@@ -106,7 +104,7 @@ app.post("/horses", authenticateUser, async (req, res) => {
     const newHorse = await new Horse({
       horse,
       userId: user._id,
-      username: user.username,
+      username: user.name,
     }).save();
     res.status(201).json({
       success: true,
