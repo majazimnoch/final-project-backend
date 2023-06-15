@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt';
 // import authenticateUser from './Middlewares/authentication';
 import User from './Models/user-users';
 import Horse from './Models/horse-horses';
-import authenticateApikey from './Middlewares/apikey-authentication';
+// import authenticateApikey from './Middlewares/apikey-authentication';
 
 dotenv.config();
 
@@ -22,7 +22,7 @@ const app = express();
 // Add middlewares to enable cors and json body parsing
 app.use(cors());
 app.use(express.json());
-app.use(authenticateApikey);
+// app.use(authenticateApikey);
 
 const authenticateUser = async (req, res, next) => {
 const accessToken = req.header("Authorization");
@@ -47,18 +47,18 @@ try {
 
  // Register
 app.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
+  const { name, email, password } = req.body;
   try {
     const salt = bcrypt.genSaltSync();
     const newUser = await new User({
-      username: req.body.username,
+      name: req.body.name,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, salt)
     }).save();
     res.status(201).json({
       success: true,
       response: {
-        username: newUser.username,
+        name: newUser.name,
         id: newUser._id,
         accessToken: newUser.accessToken
       }
@@ -79,7 +79,7 @@ app.post("/login", async (req, res) => {
       res.status(200).json({
         success: true,
         response: {
-          username: user.username,
+          name: user.name,
           id: user._id,
           accessToken: user.accessToken
         }
@@ -107,7 +107,7 @@ app.post("/horses", authenticateUser, async (req, res) => {
     const newHorse = await new Horse({
       horse,
       userId: user._id,
-      username: user.username,
+      name: user.name,
     }).save();
     res.status(201).json({
       success: true,
