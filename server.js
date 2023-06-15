@@ -15,7 +15,7 @@ const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/horsey';
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = Promise;
 
-const port = process.env.PORT || 8081;
+const port = process.env.PORT || 8080;
 const apikey = process.env.API_KEY
 const app = express();
 
@@ -47,18 +47,18 @@ try {
 
  // Register
 app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { username, email, password } = req.body;
   try {
     const salt = bcrypt.genSaltSync();
     const newUser = await new User({
-      name: req.body.name,
+      username: req.body.username,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, salt)
     }).save();
     res.status(201).json({
       success: true,
       response: {
-        name: newUser.name,
+        username: newUser.username,
         id: newUser._id,
         accessToken: newUser.accessToken
       }
@@ -79,7 +79,7 @@ app.post("/login", async (req, res) => {
       res.status(200).json({
         success: true,
         response: {
-          username: user.name,
+          username: user.username,
           id: user._id,
           accessToken: user.accessToken
         }
