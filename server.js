@@ -200,7 +200,7 @@ app.get("/users/:userId/horses", async (req, res) => {
    }
 });
 
-//Patch and delete routes
+//PUT and DELETE routes - PATCH is more complex to implement while PUT is more standardized
 // Delete horse
 app.delete("/horses/:horseId", async (req, res) => {
   const { horseId } = req.params
@@ -217,6 +217,26 @@ app.delete("/horses/:horseId", async (req, res) => {
     })
   }
 });
+
+// PUT to edit a horse
+// {new:true} ber mongoose att skicka den nya versionen av hästen (objektet) ist f den gamla
+app.put("/horses/:horseId", async (req, res) => {
+  const { horseId } = req.params
+  Horse.findByIdAndUpdate(horseId, req.body, {new:true}).then((horse) => {
+    if (!horse){
+      return res.status(404).json({
+        success: false,
+        response: "Horse not found!"
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      response: horse
+    })
+    }).catch((error) => {
+      res.status(500).send(error)
+  })
+})
 
 const factsData = require('./RandomFacts/facts.json');
 
