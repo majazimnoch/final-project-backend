@@ -18,6 +18,10 @@ const HorseDetails = new Schema({
   instructions: {
     type: [String],
     required: true
+  },
+  imageUrl: {
+    type: String,
+    required: false
   }
 })
 
